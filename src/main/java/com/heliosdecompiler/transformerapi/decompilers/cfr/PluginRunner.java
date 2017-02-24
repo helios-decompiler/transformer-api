@@ -115,13 +115,11 @@ public class PluginRunner {
 
         @Override
         protected void write(final String s) {
-            new Exception().printStackTrace();
             this.stringBuilder.append(s);
         }
 
         @Override
         public Dumper identifier(String s) {
-            System.out.println("Identifier: " + s);
             return super.identifier(s);
         }
 

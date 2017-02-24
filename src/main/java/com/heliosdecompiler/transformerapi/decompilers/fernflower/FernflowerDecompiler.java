@@ -72,14 +72,16 @@ public class FernflowerDecompiler extends Decompiler<FernflowerSettings> {
 
             if (classNode.innerClasses != null) {
                 for (InnerClassNode icn : classNode.innerClasses) {
-                    byte[] innerClassData = classpath.get(icn.name).getData();
-                    if (innerClassData != null) {
-                        ClassReader sanityCheck = new ClassReader(innerClassData);
-                        if (!sanityCheck.getClassName().equals(icn.name)) {
-                            throw new IllegalArgumentException("sanity");
-                        }
+                    if (classpath.containsKey(icn.name)) {
+                        byte[] innerClassData = classpath.get(icn.name).getData();
+                        if (innerClassData != null) {
+                            ClassReader sanityCheck = new ClassReader(innerClassData);
+                            if (!sanityCheck.getClassName().equals(icn.name)) {
+                                throw new IllegalArgumentException("sanity");
+                            }
 
-                        importantData.put(icn.name, innerClassData);
+                            importantData.put(icn.name, innerClassData);
+                        }
                     }
                 }
             }

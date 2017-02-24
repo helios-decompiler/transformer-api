@@ -54,7 +54,10 @@ public class CFRDecompiler extends Decompiler<CFRSettings> {
 
         for (String s : importantData.keySet()) {
             try {
-                results.put(s, pluginRunner.getDecompilationFor(s));
+                String decomp = pluginRunner.getDecompilationFor(s);
+                if (!decomp.isEmpty()) {
+                    results.put(s, decomp);
+                }
             } catch (Throwable t) {
                 SystemHook.err.get().println("An exception occurred while decompiling " + s);
                 t.printStackTrace(SystemHook.err.get());
