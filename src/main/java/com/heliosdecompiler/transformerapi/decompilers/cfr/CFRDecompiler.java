@@ -31,18 +31,17 @@ import java.util.Map;
 public class CFRDecompiler extends Decompiler<CFRSettings> {
     @Override
     public Result decompile(Collection<ClassData> data, CFRSettings settings, Map<String, ClassData> classpath) {
-        Map<String, byte[]> importantData = new HashMap<>();
+        Map<String, byte[]> dataToLoad = new HashMap<>();
 
         for (ClassData classData : classpath.values()) {
-            importantData.put(classData.getInternalName(), classData.getData());
+            dataToLoad.put(classData.getInternalName(), classData.getData());
         }
 
-        // Ensure nothing in classpath will overwrite the actual data to decompile
         for (ClassData classData : data) {
-            importantData.put(classData.getInternalName(), classData.getData());
+            dataToLoad.put(classData.getInternalName(), classData.getData());
         }
 
-        PluginRunner pluginRunner = new PluginRunner(settings.getSettings(), new CFRCFS(importantData));
+        PluginRunner pluginRunner = new PluginRunner(settings.getSettings(), new CFRCFS(dataToLoad));
 
         ByteArrayOutputStream redirOut = new ByteArrayOutputStream();
         ByteArrayOutputStream redirErr = new ByteArrayOutputStream();
@@ -52,14 +51,14 @@ public class CFRDecompiler extends Decompiler<CFRSettings> {
 
         Map<String, String> results = new HashMap<>();
 
-        for (String s : importantData.keySet()) {
+        for (ClassData classData: data) {
             try {
-                String decomp = pluginRunner.getDecompilationFor(s);
+                String decomp = pluginRunner.getDecompilationFor(classData.getInternalName());
                 if (!decomp.isEmpty()) {
-                    results.put(s, decomp);
+                    results.put(classData.getInternalName(), decomp);
                 }
             } catch (Throwable t) {
-                SystemHook.err.get().println("An exception occurred while decompiling " + s);
+                SystemHook.err.get().println("An exception occurred while decompiling " + classData.getInternalName());
                 t.printStackTrace(SystemHook.err.get());
             }
         }

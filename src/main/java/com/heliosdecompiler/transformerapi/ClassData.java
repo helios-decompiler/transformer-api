@@ -44,7 +44,7 @@ public class ClassData {
         ClassReader reader;
         try {
             reader = new ClassReader(data);
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
             // not a class file
             return null;
         }
