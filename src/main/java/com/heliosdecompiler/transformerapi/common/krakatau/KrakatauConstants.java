@@ -21,7 +21,7 @@ import java.io.IOException;
 
 public class KrakatauConstants {
     public static final String NAME = "Krakatau";
-    public static final String VERSION = "5ca262a7318e89a13897725197f5f55381f8736e";
+    public static final String VERSION = "00c7eeb7d1b9d1cc2221e39e5064e1b9892e5497";
 
     public static Process launchProcess(ProcessBuilder builder, KrakatauSettings settings) throws KrakatauException {
         if (settings.getProcessCreator() == null) {

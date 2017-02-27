@@ -84,12 +84,12 @@ public class PackagedLibraryHelper {
                     File file = new File(libFolder, ent.getName());
 
                     if (ent.isDirectory()) {
-                        if (!file.mkdirs()) {
-                            return new IOException("Could not make directory " + ent.getName());
+                        if (!file.exists() && !file.mkdirs()) {
+                            return new IOException("Could not make directory " + ent.getName() + " " + file);
                         }
                     } else {
-                        if (!file.getParentFile().mkdirs()) {
-                            return new IOException("Could not make directory " + ent.getName());
+                        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+                            return new IOException("Could not make directory " + ent.getName() + " " +file.getParentFile());
                         }
                         IOUtils.copy(zipInputStream, new FileOutputStream(file));
                     }
