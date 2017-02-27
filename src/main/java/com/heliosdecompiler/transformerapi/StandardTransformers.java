@@ -20,6 +20,8 @@ import com.heliosdecompiler.transformerapi.decompilers.cfr.CFRDecompiler;
 import com.heliosdecompiler.transformerapi.decompilers.fernflower.FernflowerDecompiler;
 import com.heliosdecompiler.transformerapi.decompilers.krakatau.KrakatauDecompiler;
 import com.heliosdecompiler.transformerapi.decompilers.procyon.ProcyonDecompiler;
+import com.heliosdecompiler.transformerapi.disassemblers.javap.JavapDisassembler;
+import com.heliosdecompiler.transformerapi.disassemblers.krakatau.KrakatauDisassembler;
 
 public class StandardTransformers {
     public static class Decompilers {
@@ -27,5 +29,10 @@ public class StandardTransformers {
         public static final CFRDecompiler CFR = new CFRDecompiler();
         public static final FernflowerDecompiler FERNFLOWER = new FernflowerDecompiler();
         public static final KrakatauDecompiler KRAKATAU = new KrakatauDecompiler();
+    }
+
+    public static class Disassemblers {
+        public static final KrakatauDisassembler KRAKATAU = new KrakatauDisassembler();
+        public static final JavapDisassembler JAVAP = new JavapDisassembler();
     }
 }

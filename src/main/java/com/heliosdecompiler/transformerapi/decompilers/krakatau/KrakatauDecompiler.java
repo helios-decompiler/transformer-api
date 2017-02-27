@@ -19,7 +19,9 @@ package com.heliosdecompiler.transformerapi.decompilers.krakatau;
 import com.heliosdecompiler.transformerapi.ClassData;
 import com.heliosdecompiler.transformerapi.PackagedLibraryHelper;
 import com.heliosdecompiler.transformerapi.Result;
+import com.heliosdecompiler.transformerapi.common.krakatau.KrakatauConstants;
 import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
+import com.heliosdecompiler.transformerapi.common.krakatau.KrakatauException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -32,18 +34,18 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-public class KrakatauDecompiler extends Decompiler<KrakatauSettings> {
-    private static final String NAME = "Krakatau";
-    private static final String VERSION = "a10fe4a630fb9434005186f40b390f0f950810f1";
+import static com.heliosdecompiler.transformerapi.common.krakatau.KrakatauConstants.NAME;
+import static com.heliosdecompiler.transformerapi.common.krakatau.KrakatauConstants.VERSION;
 
+public class KrakatauDecompiler extends Decompiler<KrakatauDecompilerSettings> {
     /**
      * A note, since this decompiler will write all values inside the {@code classpath} parameter to a temporary file,
-     * it's best to pass along any existing files via {@link KrakatauSettings#setPath}
+     * it's best to pass along any existing files via {@link KrakatauDecompilerSettings#setPath}
      */
     @Override
     public Result decompile(
             Collection<ClassData> data,
-            KrakatauSettings settings,
+            KrakatauDecompilerSettings settings,
             Map<String, ClassData> classpath
     ) throws KrakatauException {
         Exception packageResult = PackagedLibraryHelper.checkPackagedLibrary(NAME, VERSION);
@@ -105,7 +107,7 @@ public class KrakatauDecompiler extends Decompiler<KrakatauSettings> {
                 }
 
                 List<String> args = new ArrayList<>();
-                args.add(canon(settings.getPython2Exe()));
+                args.add(KrakatauConstants.canon(settings.getPython2Exe()));
                 args.add("-O");
                 args.add("decompile.py");
                 args.add("-skip");
@@ -118,10 +120,10 @@ public class KrakatauDecompiler extends Decompiler<KrakatauSettings> {
                     args.add(buildPath(pathFiles));
                 }
                 args.add("-out");
-                args.add(canon(outputFile));
-                args.add(canon(inputFile));
+                args.add(KrakatauConstants.canon(outputFile));
+                args.add(KrakatauConstants.canon(inputFile));
 
-                createdProcess = launchProcess(new ProcessBuilder(args).directory(PackagedLibraryHelper.getPackageRoot(NAME, VERSION)), settings);
+                createdProcess = KrakatauConstants.launchProcess(new ProcessBuilder(args).directory(PackagedLibraryHelper.getPackageRoot(NAME, VERSION)), settings);
 
                 String stdout;
                 String stderr;
@@ -180,35 +182,15 @@ public class KrakatauDecompiler extends Decompiler<KrakatauSettings> {
     }
 
     @Override
-    public KrakatauSettings defaultSettings() {
-        throw new UnsupportedOperationException("Cannot assume default settings for Krakatau");
-    }
-
-    private Process launchProcess(ProcessBuilder builder, KrakatauSettings settings) throws KrakatauException {
-        if (settings.getProcessCreator() == null) {
-            try {
-                return builder.start();
-            } catch (IOException ex) {
-                throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_LAUNCH_PROCESS, null, null);
-            }
-        } else {
-            return settings.getProcessCreator().apply(builder);
-        }
+    public KrakatauDecompilerSettings defaultSettings() {
+        return new KrakatauDecompilerSettings();
     }
 
     private String buildPath(List<File> jars) throws KrakatauException {
         StringBuilder path = new StringBuilder();
         for (File file : jars) {
-            path.append(canon(file)).append(";");
+            path.append(KrakatauConstants.canon(file)).append(";");
         }
         return path.toString();
-    }
-
-    private String canon(File file) throws KrakatauException {
-        try {
-            return file.getCanonicalPath();
-        } catch (IOException ex) {
-            throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_CANONICALIZE_PATH, null, null);
-        }
     }
 }

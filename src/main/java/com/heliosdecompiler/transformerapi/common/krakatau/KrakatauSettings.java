@@ -14,42 +14,19 @@
  * limitations under the License.
  */
 
-package com.heliosdecompiler.transformerapi.decompilers.krakatau;
+package com.heliosdecompiler.transformerapi.common.krakatau;
 
 import java.io.File;
-import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class KrakatauSettings {
-    private List<File> path;
     private File python2Exe;
 
-    private boolean assumeMagicThrow = false;
-
     private Function<ProcessBuilder, Process> processCreator;
-    private Supplier<File> tempFileCreator;
 
     public KrakatauSettings setPythonExecutable(File location) {
         this.python2Exe = location;
         return this;
-    }
-
-    public KrakatauSettings setMagicThrow(boolean magicThrow) {
-        this.assumeMagicThrow = magicThrow;
-        return this;
-    }
-
-    public File getPython2Exe() {
-        return python2Exe;
-    }
-
-    public boolean isAssumeMagicThrow() {
-        return assumeMagicThrow;
-    }
-
-    public Function<ProcessBuilder, Process> getProcessCreator() {
-        return processCreator;
     }
 
     public KrakatauSettings setProcessCreator(Function<ProcessBuilder, Process> creator) {
@@ -57,21 +34,11 @@ public class KrakatauSettings {
         return this;
     }
 
-    public List<File> getPath() {
-        return path;
+    public File getPython2Exe() {
+        return python2Exe;
     }
 
-    public KrakatauSettings setPath(List<File> path) {
-        this.path = path;
-        return this;
-    }
-
-    public Supplier<File> getTempFileCreator() {
-        return tempFileCreator;
-    }
-
-    public KrakatauSettings setTempFileCreator(Supplier<File> creator) {
-        this.tempFileCreator = creator;
-        return this;
+    public Function<ProcessBuilder, Process> getProcessCreator() {
+        return processCreator;
     }
 }

@@ -41,14 +41,13 @@ public class ClassData {
      * @return The ClassData
      */
     public static ClassData construct(byte[] data) {
-        ClassReader reader;
         try {
-            reader = new ClassReader(data);
+            ClassReader reader = new ClassReader(data);
+            return construct(reader.getClassName(), data);
         } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
             // not a class file
             return null;
         }
-        return construct(reader.getClassName(), data);
     }
 
     /**

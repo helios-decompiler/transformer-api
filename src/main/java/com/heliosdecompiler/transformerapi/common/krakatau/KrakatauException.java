@@ -30,7 +30,7 @@
  * limitations under the License.
  */
 
-package com.heliosdecompiler.transformerapi.decompilers.krakatau;
+package com.heliosdecompiler.transformerapi.common.krakatau;
 
 import com.heliosdecompiler.transformerapi.TransformationException;
 

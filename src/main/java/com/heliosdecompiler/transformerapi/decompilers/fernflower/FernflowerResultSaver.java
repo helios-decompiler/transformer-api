@@ -18,9 +18,13 @@ package com.heliosdecompiler.transformerapi.decompilers.fernflower;
 
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.jar.Manifest;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FernflowerResultSaver implements IResultSaver {
     private final Map<String, String> results = new HashMap<>();
@@ -40,6 +44,17 @@ public class FernflowerResultSaver implements IResultSaver {
     }
 
     public void saveClassFile(String path, String qualifiedName, String entryName, String content, int[] mapping) {
+        if (mapping != null) {
+            String[] splits = content.split("\r?\n");
+
+            for (int i = 0; i < mapping.length; i += 2) {
+                int srcLine = mapping[i + 1] - 1; // line in decompiled source
+                int actualLine = mapping[i]; // actual source line
+                splits[srcLine] = splits[srcLine] + " /* " + actualLine + " */";
+            }
+
+            content = Stream.of(splits).collect(Collectors.joining("\r\n"));
+        }
         results.put(qualifiedName, content);
     }
 
