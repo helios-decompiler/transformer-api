@@ -20,8 +20,8 @@ import com.heliosdecompiler.transformerapi.ClassData;
 import com.heliosdecompiler.transformerapi.PackagedLibraryHelper;
 import com.heliosdecompiler.transformerapi.Result;
 import com.heliosdecompiler.transformerapi.common.krakatau.KrakatauConstants;
-import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
 import com.heliosdecompiler.transformerapi.common.krakatau.KrakatauException;
+import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -146,7 +146,6 @@ public class KrakatauDecompiler extends Decompiler<KrakatauDecompilerSettings> {
                 Map<String, String> results = new HashMap<>();
 
                 try (JarFile zipFile = new JarFile(outputFile)) {
-
                     Enumeration<JarEntry> e = zipFile.entries();
                     while (e.hasMoreElements()) {
                         JarEntry next = e.nextElement();
@@ -156,6 +155,7 @@ public class KrakatauDecompiler extends Decompiler<KrakatauDecompilerSettings> {
                                 throw new KrakatauException("Unexpected output: " + name, KrakatauException.Reason.UNEXPECTED_OUTPUT, stdout, stderr);
                             }
                             name = name.substring(0, name.length() - ".java".length());
+
                             try (InputStream inputStream = zipFile.getInputStream(next)) {
                                 String result = new String(IOUtils.toByteArray(inputStream), StandardCharsets.UTF_8);
                                 results.put(name, result);
