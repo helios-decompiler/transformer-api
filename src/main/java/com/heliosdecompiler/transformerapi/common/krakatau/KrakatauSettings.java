@@ -16,20 +16,22 @@
 
 package com.heliosdecompiler.transformerapi.common.krakatau;
 
+import com.heliosdecompiler.transformerapi.ExceptionalFunction;
+
 import java.io.File;
-import java.util.function.Function;
+import java.io.IOException;
 
 public class KrakatauSettings {
     private File python2Exe;
 
-    private Function<ProcessBuilder, Process> processCreator;
+    private ExceptionalFunction<ProcessBuilder, Process, IOException> processCreator;
 
     public KrakatauSettings setPythonExecutable(File location) {
         this.python2Exe = location;
         return this;
     }
 
-    public KrakatauSettings setProcessCreator(Function<ProcessBuilder, Process> creator) {
+    public KrakatauSettings setProcessCreator(ExceptionalFunction<ProcessBuilder, Process, IOException> creator) {
         this.processCreator = creator;
         return this;
     }
@@ -38,7 +40,7 @@ public class KrakatauSettings {
         return python2Exe;
     }
 
-    public Function<ProcessBuilder, Process> getProcessCreator() {
+    public ExceptionalFunction<ProcessBuilder, Process, IOException> getProcessCreator() {
         return processCreator;
     }
 }

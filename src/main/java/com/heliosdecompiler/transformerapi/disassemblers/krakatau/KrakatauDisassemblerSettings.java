@@ -32,10 +32,11 @@
 
 package com.heliosdecompiler.transformerapi.disassemblers.krakatau;
 
+import com.heliosdecompiler.transformerapi.ExceptionalFunction;
 import com.heliosdecompiler.transformerapi.common.krakatau.KrakatauSettings;
 
 import java.io.File;
-import java.util.function.Function;
+import java.io.IOException;
 
 public class KrakatauDisassemblerSettings extends KrakatauSettings {
     private boolean roundtrip = false;
@@ -56,7 +57,7 @@ public class KrakatauDisassemblerSettings extends KrakatauSettings {
     }
 
     @Override
-    public KrakatauDisassemblerSettings setProcessCreator(Function<ProcessBuilder, Process> creator) {
+    public KrakatauDisassemblerSettings setProcessCreator(ExceptionalFunction<ProcessBuilder, Process, IOException> creator) {
         super.setProcessCreator(creator);
         return this;
     }

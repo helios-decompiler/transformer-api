@@ -24,14 +24,14 @@ public class KrakatauConstants {
     public static final String VERSION = "00c7eeb7d1b9d1cc2221e39e5064e1b9892e5497";
 
     public static Process launchProcess(ProcessBuilder builder, KrakatauSettings settings) throws KrakatauException {
-        if (settings.getProcessCreator() == null) {
-            try {
+        try {
+            if (settings.getProcessCreator() == null) {
                 return builder.start();
-            } catch (IOException ex) {
-                throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_LAUNCH_PROCESS, null, null);
+            } else {
+                return settings.getProcessCreator().apply(builder);
             }
-        } else {
-            return settings.getProcessCreator().apply(builder);
+        } catch (IOException ex) {
+            throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_LAUNCH_PROCESS, null, null);
         }
     }
 
