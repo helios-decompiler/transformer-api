@@ -56,7 +56,7 @@ public class KrakatauDisassembler extends Disassembler<KrakatauDisassemblerSetti
 
         try {
             try {
-                sessionDirectory = Files.createTempDirectory("krakatau-decompile-").toFile();
+                sessionDirectory = Files.createTempDirectory("krakatau-disassemble-").toFile();
             } catch (IOException ex) {
                 throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_CREATE_TEMP_DIR, null, null);
             }
