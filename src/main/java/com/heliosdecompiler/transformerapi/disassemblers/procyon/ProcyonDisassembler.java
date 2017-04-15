@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package com.heliosdecompiler.transformerapi.decompilers.procyon;
+package com.heliosdecompiler.transformerapi.disassemblers.procyon;
 
 import com.heliosdecompiler.transformerapi.ClassData;
 import com.heliosdecompiler.transformerapi.Result;
+import com.heliosdecompiler.transformerapi.TransformationException;
 import com.heliosdecompiler.transformerapi.common.procyon.ProcyonTypeLoader;
-import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
+import com.heliosdecompiler.transformerapi.disassemblers.Disassembler;
+import com.strobel.decompiler.Decompiler;
 import com.strobel.decompiler.DecompilerSettings;
 import com.strobel.decompiler.PlainTextOutput;
+import com.strobel.decompiler.languages.Languages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -31,9 +34,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProcyonDecompiler extends Decompiler<DecompilerSettings> {
+public class ProcyonDisassembler extends Disassembler<DecompilerSettings> {
     @Override
-    public Result decompile(Collection<ClassData> data, DecompilerSettings settings, Map<String, ClassData> classpath) {
+    public Result disassemble(Collection<ClassData> data, DecompilerSettings settings, Map<String, ClassData> classpath) throws TransformationException {
         Map<String, byte[]> importantClasses = new HashMap<>();
         for (ClassData classData : data) {
             importantClasses.put(classData.getInternalName(), classData.getData());
@@ -49,10 +52,10 @@ public class ProcyonDecompiler extends Decompiler<DecompilerSettings> {
         for (ClassData classData : data) {
             StringWriter stringwriter = new StringWriter();
             try {
-                com.strobel.decompiler.Decompiler.decompile(classData.getInternalName(), new PlainTextOutput(stringwriter), settings);
+                Decompiler.decompile(classData.getInternalName(), new PlainTextOutput(stringwriter), settings);
                 result.put(classData.getInternalName(), stringwriter.toString());
             } catch (Throwable t) {
-                printErr.println("An exception occurred while decompiling: " + classData.getInternalName());
+                printErr.println("An exception occurred while disassembling: " + classData.getInternalName());
                 t.printStackTrace(printErr);
             }
         }
@@ -62,6 +65,8 @@ public class ProcyonDecompiler extends Decompiler<DecompilerSettings> {
 
     @Override
     public DecompilerSettings defaultSettings() {
-        return new DecompilerSettings();
+        DecompilerSettings decompilerSettings = new DecompilerSettings();
+        decompilerSettings.setLanguage(Languages.bytecode());
+        return decompilerSettings;
     }
 }

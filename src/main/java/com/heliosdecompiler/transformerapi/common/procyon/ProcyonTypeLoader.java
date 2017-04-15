@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.heliosdecompiler.transformerapi.decompilers.procyon;
+package com.heliosdecompiler.transformerapi.common.procyon;
 
 import com.strobel.assembler.InputTypeLoader;
 import com.strobel.assembler.metadata.Buffer;

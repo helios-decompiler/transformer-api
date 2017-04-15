@@ -34,5 +34,6 @@ public class StandardTransformers {
     public static class Disassemblers {
         public static final KrakatauDisassembler KRAKATAU = new KrakatauDisassembler();
         public static final JavapDisassembler JAVAP = new JavapDisassembler();
+        public static final ProcyonDecompiler PROCYON = new ProcyonDecompiler();
     }
 }
