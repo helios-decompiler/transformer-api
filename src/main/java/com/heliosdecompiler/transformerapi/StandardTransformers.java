@@ -22,6 +22,7 @@ import com.heliosdecompiler.transformerapi.decompilers.krakatau.KrakatauDecompil
 import com.heliosdecompiler.transformerapi.decompilers.procyon.ProcyonDecompiler;
 import com.heliosdecompiler.transformerapi.disassemblers.javap.JavapDisassembler;
 import com.heliosdecompiler.transformerapi.disassemblers.krakatau.KrakatauDisassembler;
+import com.heliosdecompiler.transformerapi.disassemblers.procyon.ProcyonDisassembler;
 
 public class StandardTransformers {
     public static class Decompilers {
@@ -34,6 +35,6 @@ public class StandardTransformers {
     public static class Disassemblers {
         public static final KrakatauDisassembler KRAKATAU = new KrakatauDisassembler();
         public static final JavapDisassembler JAVAP = new JavapDisassembler();
-        public static final ProcyonDecompiler PROCYON = new ProcyonDecompiler();
+        public static final ProcyonDisassembler PROCYON = new ProcyonDisassembler();
     }
 }
