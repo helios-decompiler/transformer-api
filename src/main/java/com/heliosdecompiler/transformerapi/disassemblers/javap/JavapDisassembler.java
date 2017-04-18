@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class JavapDisassembler extends Disassembler<Options> {
     @Override
-    public TransformationResult disassemble(Collection<ClassData> data, Options settings, Map<String, ClassData> classpath) throws TransformationException {
+    public TransformationResult<String> disassemble(Collection<ClassData> data, Options settings, Map<String, ClassData> classpath) throws TransformationException {
         Map<String, String> result = new HashMap<>();
 
         for (ClassData classData : data) {
@@ -47,7 +47,7 @@ public class JavapDisassembler extends Disassembler<Options> {
             result.put(classData.getInternalName(), stringWriter.toString());
         }
 
-        return new TransformationResult(result, null, null);
+        return new TransformationResult<>(result, null, null);
     }
 
     @Override

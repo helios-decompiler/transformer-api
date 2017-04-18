@@ -36,7 +36,7 @@ import java.util.Map;
 
 public class ProcyonDisassembler extends Disassembler<DecompilerSettings> {
     @Override
-    public TransformationResult disassemble(Collection<ClassData> data, DecompilerSettings settings, Map<String, ClassData> classpath) throws TransformationException {
+    public TransformationResult<String> disassemble(Collection<ClassData> data, DecompilerSettings settings, Map<String, ClassData> classpath) throws TransformationException {
         Map<String, byte[]> importantClasses = new HashMap<>();
         for (ClassData classData : data) {
             importantClasses.put(classData.getInternalName(), classData.getData());
@@ -60,7 +60,7 @@ public class ProcyonDisassembler extends Disassembler<DecompilerSettings> {
             }
         }
 
-        return new TransformationResult(result, null, new String(redirErr.toByteArray(), StandardCharsets.UTF_8));
+        return new TransformationResult<>(result, null, new String(redirErr.toByteArray(), StandardCharsets.UTF_8));
     }
 
     @Override

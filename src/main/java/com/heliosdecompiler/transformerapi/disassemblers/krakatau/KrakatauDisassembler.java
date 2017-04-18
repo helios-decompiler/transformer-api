@@ -40,7 +40,7 @@ import static com.heliosdecompiler.transformerapi.common.krakatau.KrakatauConsta
 
 public class KrakatauDisassembler extends Disassembler<KrakatauDisassemblerSettings> {
     @Override
-    public TransformationResult disassemble(Collection<ClassData> data, KrakatauDisassemblerSettings settings, Map<String, ClassData> classpath) throws TransformationException {
+    public TransformationResult<String> disassemble(Collection<ClassData> data, KrakatauDisassemblerSettings settings, Map<String, ClassData> classpath) throws TransformationException {
         Exception packageResult = PackagedLibraryHelper.checkPackagedLibrary(NAME, VERSION);
         if (packageResult != null) {
             throw new KrakatauException(packageResult, KrakatauException.Reason.MISSING_KRAKATAU, null, null);
@@ -131,7 +131,7 @@ public class KrakatauDisassembler extends Disassembler<KrakatauDisassemblerSetti
                 throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_OPEN_OUTPUT, stdout, stderr);
             }
 
-            return new TransformationResult(results, stdout, stderr);
+            return new TransformationResult<>(results, stdout, stderr);
         } finally {
             FileUtils.deleteQuietly(sessionDirectory);
             if (createdProcess != null)
