@@ -14,6 +14,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>helios-decompiler-repo</id>
+            <name>Official Helios Repository</name>
+            <url>https://repo.samczsun.com/repository/helios-decompiler/</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <finalName>transformer-api</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
