@@ -180,3 +180,4 @@ hs_err_pid*
 
 # For now
 src/test
+*.j

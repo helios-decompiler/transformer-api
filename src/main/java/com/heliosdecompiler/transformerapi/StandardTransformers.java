@@ -16,6 +16,7 @@
 
 package com.heliosdecompiler.transformerapi;
 
+import com.heliosdecompiler.transformerapi.assemblers.krakatau.KrakatauAssembler;
 import com.heliosdecompiler.transformerapi.decompilers.cfr.CFRDecompiler;
 import com.heliosdecompiler.transformerapi.decompilers.fernflower.FernflowerDecompiler;
 import com.heliosdecompiler.transformerapi.decompilers.krakatau.KrakatauDecompiler;
@@ -36,5 +37,9 @@ public class StandardTransformers {
         public static final KrakatauDisassembler KRAKATAU = new KrakatauDisassembler();
         public static final JavapDisassembler JAVAP = new JavapDisassembler();
         public static final ProcyonDisassembler PROCYON = new ProcyonDisassembler();
+    }
+
+    public static class Assemblers {
+        public static final KrakatauAssembler KRAKATAU = new KrakatauAssembler();
     }
 }
