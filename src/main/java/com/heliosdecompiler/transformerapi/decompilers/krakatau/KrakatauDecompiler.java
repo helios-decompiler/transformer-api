@@ -18,7 +18,7 @@ package com.heliosdecompiler.transformerapi.decompilers.krakatau;
 
 import com.heliosdecompiler.transformerapi.ClassData;
 import com.heliosdecompiler.transformerapi.PackagedLibraryHelper;
-import com.heliosdecompiler.transformerapi.Result;
+import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.common.krakatau.KrakatauConstants;
 import com.heliosdecompiler.transformerapi.common.krakatau.KrakatauException;
 import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
@@ -43,7 +43,7 @@ public class KrakatauDecompiler extends Decompiler<KrakatauDecompilerSettings> {
      * it's best to pass along any existing files via {@link KrakatauDecompilerSettings#setPath}
      */
     @Override
-    public Result decompile(
+    public TransformationResult<String> decompile(
             Collection<ClassData> data,
             KrakatauDecompilerSettings settings,
             Map<String, ClassData> classpath
@@ -126,7 +126,7 @@ public class KrakatauDecompiler extends Decompiler<KrakatauDecompilerSettings> {
                 createdProcess = KrakatauConstants.launchProcess(new ProcessBuilder(args).directory(PackagedLibraryHelper.getPackageRoot(NAME, VERSION)), settings);
 
                 String stdout;
-                String stderr;
+                StringBuilder stderr;
 
                 try {
                     stdout = IOUtils.toString(createdProcess.getInputStream(), StandardCharsets.UTF_8);
@@ -136,11 +136,11 @@ public class KrakatauDecompiler extends Decompiler<KrakatauDecompilerSettings> {
                     stdout = writer.toString();
                 }
                 try {
-                    stderr = IOUtils.toString(createdProcess.getErrorStream(), StandardCharsets.UTF_8);
+                    stderr = new StringBuilder(IOUtils.toString(createdProcess.getErrorStream(), StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     StringWriter writer = new StringWriter();
                     e.printStackTrace(new PrintWriter(writer));
-                    stderr = writer.toString();
+                    stderr = new StringBuilder(writer.toString());
                 }
 
                 Map<String, String> results = new HashMap<>();
@@ -152,7 +152,7 @@ public class KrakatauDecompiler extends Decompiler<KrakatauDecompilerSettings> {
                         if (!next.isDirectory()) {
                             String name = next.getName();
                             if (!name.endsWith(".java")) {
-                                throw new KrakatauException("Unexpected output: " + name, KrakatauException.Reason.UNEXPECTED_OUTPUT, stdout, stderr);
+                                throw new KrakatauException("Unexpected output: " + name, KrakatauException.Reason.UNEXPECTED_OUTPUT, stdout, stderr.toString());
                             }
                             name = name.substring(0, name.length() - ".java".length());
 
@@ -162,15 +162,15 @@ public class KrakatauDecompiler extends Decompiler<KrakatauDecompilerSettings> {
                             } catch (IOException ex) {
                                 StringWriter err = new StringWriter();
                                 ex.printStackTrace(new PrintWriter(err));
-                                stderr += "\r\nError occurred while reading input: " + next.getName() + "\r\n" + err.toString();
+                                stderr.append("\r\nError occurred while reading input: ").append(next.getName()).append("\r\n").append(err.toString());
                             }
                         }
                     }
                 } catch (IOException ex) {
-                    throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_OPEN_OUTPUT, stdout, stderr);
+                    throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_OPEN_OUTPUT, stdout, stderr.toString());
                 }
 
-                return new Result(results, stdout, stderr);
+                return new TransformationResult<>(results, stdout, stderr.toString());
             } finally {
                 FileUtils.deleteQuietly(sessionDirectory);
                 if (createdProcess != null)

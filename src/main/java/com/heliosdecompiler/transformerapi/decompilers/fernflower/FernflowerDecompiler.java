@@ -17,7 +17,7 @@
 package com.heliosdecompiler.transformerapi.decompilers.fernflower;
 
 import com.heliosdecompiler.transformerapi.ClassData;
-import com.heliosdecompiler.transformerapi.Result;
+import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
 import org.jetbrains.java.decompiler.main.DecompilerContext;
 import org.jetbrains.java.decompiler.main.Fernflower;
@@ -60,7 +60,7 @@ public class FernflowerDecompiler extends Decompiler<FernflowerSettings> {
     }
 
     @Override
-    public Result decompile(Collection<ClassData> data, FernflowerSettings settings, Map<String, ClassData> classpath) {
+    public TransformationResult<String> decompile(Collection<ClassData> data, FernflowerSettings settings, Map<String, ClassData> classpath) {
         Map<String, byte[]> importantData = new HashMap<>();
 
         for (ClassData classData : data) {
@@ -118,7 +118,7 @@ public class FernflowerDecompiler extends Decompiler<FernflowerSettings> {
             baseDecompiler.clearContext();
         }
 
-        return new Result(saver.getResults(), new String(log.toByteArray(), StandardCharsets.UTF_8), null);
+        return new TransformationResult<>(saver.getResults(), new String(log.toByteArray(), StandardCharsets.UTF_8), null);
     }
 
     @Override

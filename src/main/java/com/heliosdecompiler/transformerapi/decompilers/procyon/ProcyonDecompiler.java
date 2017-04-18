@@ -17,7 +17,7 @@
 package com.heliosdecompiler.transformerapi.decompilers.procyon;
 
 import com.heliosdecompiler.transformerapi.ClassData;
-import com.heliosdecompiler.transformerapi.Result;
+import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.common.procyon.ProcyonTypeLoader;
 import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
 import com.strobel.decompiler.DecompilerSettings;
@@ -33,7 +33,7 @@ import java.util.Map;
 
 public class ProcyonDecompiler extends Decompiler<DecompilerSettings> {
     @Override
-    public Result decompile(Collection<ClassData> data, DecompilerSettings settings, Map<String, ClassData> classpath) {
+    public TransformationResult<String> decompile(Collection<ClassData> data, DecompilerSettings settings, Map<String, ClassData> classpath) {
         Map<String, byte[]> importantClasses = new HashMap<>();
         for (ClassData classData : data) {
             importantClasses.put(classData.getInternalName(), classData.getData());
@@ -57,7 +57,7 @@ public class ProcyonDecompiler extends Decompiler<DecompilerSettings> {
             }
         }
 
-        return new Result(result, null, new String(redirErr.toByteArray(), StandardCharsets.UTF_8));
+        return new TransformationResult<>(result, null, new String(redirErr.toByteArray(), StandardCharsets.UTF_8));
     }
 
     @Override

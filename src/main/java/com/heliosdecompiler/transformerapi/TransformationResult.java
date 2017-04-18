@@ -19,21 +19,21 @@ package com.heliosdecompiler.transformerapi;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Result {
+public class TransformationResult<T> {
 
-    private final Map<String, String> decompiledResult = new HashMap<>();
+    private final Map<String, T> decompiledResult = new HashMap<>();
 
     private final String stdout;
     private final String stderr;
 
-    public Result(Map<String, String> results, String stdout, String stderr) {
+    public TransformationResult(Map<String, T> results, String stdout, String stderr) {
         decompiledResult.putAll(results);
 
         this.stdout = stdout == null ? "" : stdout;
         this.stderr = stderr == null ? "" : stderr;
     }
 
-    public Map<String, String> getDecompiledResult() {
+    public Map<String, T> getDecompiledResult() {
         return decompiledResult;
     }
 

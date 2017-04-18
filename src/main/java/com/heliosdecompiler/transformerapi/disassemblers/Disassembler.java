@@ -17,7 +17,7 @@
 package com.heliosdecompiler.transformerapi.disassemblers;
 
 import com.heliosdecompiler.transformerapi.ClassData;
-import com.heliosdecompiler.transformerapi.Result;
+import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.TransformationException;
 
 import java.util.Collection;
@@ -37,7 +37,7 @@ public abstract class Disassembler<SettingType> {
      * @param data The data of the class to decompile
      * @return The result
      */
-    public final Result disassemble(ClassData data) throws TransformationException {
+    public final TransformationResult disassemble(ClassData data) throws TransformationException {
         return disassemble(Collections.singleton(data), defaultSettings(), Collections.emptyMap());
     }
 
@@ -48,7 +48,7 @@ public abstract class Disassembler<SettingType> {
      * @param settings The settings to use with this decompiler
      * @return The result
      */
-    public final Result disassemble(ClassData data, SettingType settings) throws TransformationException {
+    public final TransformationResult disassemble(ClassData data, SettingType settings) throws TransformationException {
         return disassemble(Collections.singleton(data), settings, Collections.emptyMap());
     }
 
@@ -60,7 +60,7 @@ public abstract class Disassembler<SettingType> {
      * @param classpath The additional files which may be required for metadata. Keys should also be internal names
      * @return The result
      */
-    public final Result disassemble(ClassData data, SettingType settings, Collection<ClassData> classpath) throws TransformationException {
+    public final TransformationResult disassemble(ClassData data, SettingType settings, Collection<ClassData> classpath) throws TransformationException {
         Map<String, ClassData> map = new HashMap<>();
         classpath.forEach(classData -> map.put(classData.getInternalName(), classData));
         return disassemble(Collections.singleton(data), settings, map);
@@ -74,7 +74,7 @@ public abstract class Disassembler<SettingType> {
      * @param classpath The additional files which may be required for metadata. Keys should also be internal names
      * @return The result
      */
-    public final Result disassemble(Collection<ClassData> data, SettingType settings, Collection<ClassData> classpath) throws TransformationException {
+    public final TransformationResult disassemble(Collection<ClassData> data, SettingType settings, Collection<ClassData> classpath) throws TransformationException {
         Map<String, ClassData> map = new HashMap<>();
         classpath.forEach(classData -> map.put(classData.getInternalName(), classData));
         return disassemble(data, settings, map);
@@ -88,7 +88,7 @@ public abstract class Disassembler<SettingType> {
      * @param classpath The additional files which may be required for metadata. Keys should also be internal names
      * @return The result
      */
-    public abstract Result disassemble(Collection<ClassData> data, SettingType settings, Map<String, ClassData> classpath) throws TransformationException;
+    public abstract TransformationResult disassemble(Collection<ClassData> data, SettingType settings, Map<String, ClassData> classpath) throws TransformationException;
 
     public abstract SettingType defaultSettings();
 }

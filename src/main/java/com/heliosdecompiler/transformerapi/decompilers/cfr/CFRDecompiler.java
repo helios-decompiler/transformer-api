@@ -18,7 +18,7 @@ package com.heliosdecompiler.transformerapi.decompilers.cfr;
 
 import com.heliosdecompiler.appifier.SystemHook;
 import com.heliosdecompiler.transformerapi.ClassData;
-import com.heliosdecompiler.transformerapi.Result;
+import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
 
 import java.io.ByteArrayOutputStream;
@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class CFRDecompiler extends Decompiler<CFRSettings> {
     @Override
-    public Result decompile(Collection<ClassData> data, CFRSettings settings, Map<String, ClassData> classpath) {
+    public TransformationResult<String> decompile(Collection<ClassData> data, CFRSettings settings, Map<String, ClassData> classpath) {
         Map<String, byte[]> dataToLoad = new HashMap<>();
 
         for (ClassData classData : classpath.values()) {
@@ -66,7 +66,7 @@ public class CFRDecompiler extends Decompiler<CFRSettings> {
         SystemHook.out.set(System.out);
         SystemHook.err.set(System.err);
 
-        return new Result(results, new String(redirOut.toByteArray(), StandardCharsets.UTF_8), new String(redirErr.toByteArray(), StandardCharsets.UTF_8));
+        return new TransformationResult<>(results, new String(redirOut.toByteArray(), StandardCharsets.UTF_8), new String(redirErr.toByteArray(), StandardCharsets.UTF_8));
     }
 
     @Override

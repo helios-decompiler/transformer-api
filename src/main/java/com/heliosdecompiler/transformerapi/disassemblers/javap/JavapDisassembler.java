@@ -17,7 +17,7 @@
 package com.heliosdecompiler.transformerapi.disassemblers.javap;
 
 import com.heliosdecompiler.transformerapi.ClassData;
-import com.heliosdecompiler.transformerapi.Result;
+import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.TransformationException;
 import com.heliosdecompiler.transformerapi.disassemblers.Disassembler;
 import com.sun.tools.javap.JavapTask;
@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class JavapDisassembler extends Disassembler<Options> {
     @Override
-    public Result disassemble(Collection<ClassData> data, Options settings, Map<String, ClassData> classpath) throws TransformationException {
+    public TransformationResult disassemble(Collection<ClassData> data, Options settings, Map<String, ClassData> classpath) throws TransformationException {
         Map<String, String> result = new HashMap<>();
 
         for (ClassData classData : data) {
@@ -47,7 +47,7 @@ public class JavapDisassembler extends Disassembler<Options> {
             result.put(classData.getInternalName(), stringWriter.toString());
         }
 
-        return new Result(result, null, null);
+        return new TransformationResult(result, null, null);
     }
 
     @Override

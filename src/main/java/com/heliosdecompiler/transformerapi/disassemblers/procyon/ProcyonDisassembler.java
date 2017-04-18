@@ -17,7 +17,7 @@
 package com.heliosdecompiler.transformerapi.disassemblers.procyon;
 
 import com.heliosdecompiler.transformerapi.ClassData;
-import com.heliosdecompiler.transformerapi.Result;
+import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.TransformationException;
 import com.heliosdecompiler.transformerapi.common.procyon.ProcyonTypeLoader;
 import com.heliosdecompiler.transformerapi.disassemblers.Disassembler;
@@ -36,7 +36,7 @@ import java.util.Map;
 
 public class ProcyonDisassembler extends Disassembler<DecompilerSettings> {
     @Override
-    public Result disassemble(Collection<ClassData> data, DecompilerSettings settings, Map<String, ClassData> classpath) throws TransformationException {
+    public TransformationResult disassemble(Collection<ClassData> data, DecompilerSettings settings, Map<String, ClassData> classpath) throws TransformationException {
         Map<String, byte[]> importantClasses = new HashMap<>();
         for (ClassData classData : data) {
             importantClasses.put(classData.getInternalName(), classData.getData());
@@ -60,7 +60,7 @@ public class ProcyonDisassembler extends Disassembler<DecompilerSettings> {
             }
         }
 
-        return new Result(result, null, new String(redirErr.toByteArray(), StandardCharsets.UTF_8));
+        return new TransformationResult(result, null, new String(redirErr.toByteArray(), StandardCharsets.UTF_8));
     }
 
     @Override
