@@ -21,20 +21,20 @@ import java.util.Map;
 
 public class TransformationResult<T> {
 
-    private final Map<String, T> decompiledResult = new HashMap<>();
+    private final Map<String, T> transformationData = new HashMap<>();
 
     private final String stdout;
     private final String stderr;
 
     public TransformationResult(Map<String, T> results, String stdout, String stderr) {
-        decompiledResult.putAll(results);
+        transformationData.putAll(results);
 
         this.stdout = stdout == null ? "" : stdout;
         this.stderr = stderr == null ? "" : stderr;
     }
 
-    public Map<String, T> getDecompiledResult() {
-        return decompiledResult;
+    public Map<String, T> getTransformationData() {
+        return transformationData;
     }
 
     public String getStdout() {
