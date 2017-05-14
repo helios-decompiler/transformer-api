@@ -4,7 +4,7 @@
 
     <groupId>com.heliosdecompiler</groupId>
     <artifactId>transformer-api</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>transformer-api</name>
@@ -103,14 +103,14 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>java-decompiler</artifactId>
-            <version>fc2835e</version>
+            <version>a569683</version>
             <!--Apache 2.0-->
             <!--helios-->
         </dependency>
         <dependency>
             <groupId>org.benf</groupId>
             <artifactId>cfr</artifactId>
-            <version>0.119-APPIFIED</version>
+            <version>0.121-APPIFIED</version>
             <!--MIT-->
             <!--helios-->
         </dependency>
