@@ -4,7 +4,7 @@
 
     <groupId>com.heliosdecompiler</groupId>
     <artifactId>transformer-api</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
     <packaging>jar</packaging>
 
     <name>transformer-api</name>
@@ -12,6 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.asm>6.0</version.asm>
     </properties>
 
     <distributionManagement>
@@ -82,15 +83,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-debug-all</artifactId>
-            <version>5.0.4</version>
-            <!--BSD-->
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.5</version>
+            <version>2.6</version>
             <!--Apache 2.0-->
         </dependency>
         <dependency>
@@ -103,14 +98,14 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>java-decompiler</artifactId>
-            <version>a569683</version>
+            <version>05086be</version>
             <!--Apache 2.0-->
             <!--helios-->
         </dependency>
         <dependency>
             <groupId>org.benf</groupId>
             <artifactId>cfr</artifactId>
-            <version>0.121-APPIFIED</version>
+            <version>0.124-APPIFIED</version>
             <!--MIT-->
             <!--helios-->
         </dependency>
@@ -120,6 +115,33 @@
             <version>1aa0bd2</version>
             <!--Apache 2.0-->
             <!--helios-->
+        </dependency>
+
+        <!-- ASM related dependencies (BSD) -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>${version.asm}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>${version.asm}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>${version.asm}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>${version.asm}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-analysis</artifactId>
+            <version>${version.asm}</version>
         </dependency>
     </dependencies>
 </project>
