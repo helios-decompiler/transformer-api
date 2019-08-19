@@ -16,7 +16,7 @@
 
 package com.heliosdecompiler.transformerapi.disassemblers.javap;
 
-import com.heliosdecompiler.transformerapi.ClassData;
+import com.heliosdecompiler.transformerapi.FileContents;
 import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.TransformationException;
 import com.heliosdecompiler.transformerapi.disassemblers.Disassembler;
@@ -31,20 +31,20 @@ import java.util.Map;
 
 public class JavapDisassembler extends Disassembler<Options> {
     @Override
-    public TransformationResult<String> disassemble(Collection<ClassData> data, Options settings, Map<String, ClassData> classpath) throws TransformationException {
+    public TransformationResult<String> disassemble(Collection<FileContents> data, Options settings, Map<String, FileContents> classpath) throws TransformationException {
         Map<String, String> result = new HashMap<>();
 
-        for (ClassData classData : data) {
+        for (FileContents fileContents : data) {
             StringWriter stringWriter = new StringWriter();
             JavapTask task = new JavapTask();
             task.logToUse = new PrintWriter(stringWriter);
-            task.classData = classData.getData();
-            task.className = classData.getInternalName();
+            task.classData = fileContents.getData();
+            task.className = fileContents.getName();
             task.options = settings;
             task.context.put(Options.class, settings);
             task.run();
 
-            result.put(classData.getInternalName(), stringWriter.toString());
+            result.put(fileContents.getName(), stringWriter.toString());
         }
 
         return new TransformationResult<>(result, null, null);

@@ -19,37 +19,35 @@ package com.heliosdecompiler.transformerapi.decompilers.cfr;
 import org.benf.cfr.reader.api.ClassFileSource;
 import org.benf.cfr.reader.bytecode.analysis.parse.utils.Pair;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CFRCFS implements ClassFileSource {
+public class InMemoryClassFileSource implements ClassFileSource {
 
     private final Map<String, byte[]> importantData = new HashMap<>();
 
-    public CFRCFS(Map<String, byte[]> importantData) {
+    public InMemoryClassFileSource(Map<String, byte[]> importantData) {
         this.importantData.putAll(importantData);
     }
 
     @Override
-    public void informAnalysisRelativePathDetail(String s, String s1) {
-        // Not quite sure what this does
+    public void informAnalysisRelativePathDetail(String usePath, String classFilePath) {
+
     }
 
     @Override
-    public Collection<String> addJar(String s) {
-        throw new IllegalArgumentException("Unexpected");
+    public Collection<String> addJar(String path) {
+        throw new IllegalArgumentException("CFR requested access to a JAR at " + path);
     }
 
     @Override
-    public String getPossiblyRenamedPath(String s) {
-        // Not quite sure what this does
-        return s;
+    public String getPossiblyRenamedPath(String path) {
+        return path;
     }
 
     @Override
-    public Pair<byte[], String> getClassFileContent(String pathOrName) throws IOException {
+    public Pair<byte[], String> getClassFileContent(String pathOrName) {
         // CFR always appends a ".class" onto the end of the name if it can't find the file
         // This may be problematic because it also tries to check if a file with path "pathOrName" exists
 

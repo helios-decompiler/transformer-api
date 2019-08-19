@@ -43,26 +43,25 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class PackagedLibraryHelper {
-    private static final File ROOT_DIR = new File(System.getProperty("user.home") + File.separatorChar + ".helios");
-    private static final File PACKAGES_DIR = new File(ROOT_DIR, "packages");
+    private static final File PACKAGES_DIR = new File(System.getProperty("user.home") + File.separatorChar + ".helios" + File.separator + "packages");
 
-    public static Exception checkPackagedLibrary(String name, String version) {
+    public static void checkPackagedLibrary(String name, String version) throws IOException {
         File libFolder = new File(PACKAGES_DIR, name);
         if (libFolder.isFile()) {
             if (!libFolder.delete()) {
-                return new IOException("Could not delete file with same name as folder");
+                throw new IOException("Could not delete file with same name as folder");
             }
         }
 
         if (!libFolder.exists()) {
             if (!libFolder.mkdirs()) {
-                return new IOException("Could not create folder");
+                throw new IOException("Could not create folder");
             }
         }
 
         File[] files = libFolder.listFiles();
         if (files == null) {
-            return new IOException("Could not list files");
+            throw new IOException("Could not list files");
         }
 
         for (File file : files) {
@@ -75,7 +74,7 @@ public class PackagedLibraryHelper {
         if (!versionDirectory.exists()) {
             InputStream inputStream = PackagedLibraryHelper.class.getResourceAsStream("/" + name + "-" + version + ".zip");
             if (inputStream == null) {
-                return new IOException("Could not find packaged library");
+                throw new IOException("Could not find packaged library");
             }
 
             try (ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
@@ -85,23 +84,22 @@ public class PackagedLibraryHelper {
 
                     if (ent.isDirectory()) {
                         if (!file.exists() && !file.mkdirs()) {
-                            return new IOException("Could not make directory " + ent.getName() + " " + file);
+                            throw new IOException("Could not make directory " + ent.getName() + " " + file);
                         }
                     } else {
                         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-                            return new IOException("Could not make directory " + ent.getName() + " " +file.getParentFile());
+                            throw new IOException("Could not make directory " + ent.getName() + " " + file.getParentFile());
                         }
                         IOUtils.copy(zipInputStream, new FileOutputStream(file));
                     }
                 }
-            } catch (IOException ex) {
-                return ex;
             }
         }
-        return null;
     }
 
     public static File getPackageRoot(String name, String version) {
+        String override = System.getProperty("com.heliosdecompiler.transformerapi.override." + name.toLowerCase());
+        if (override != null) return new File(override);
         return new File(PACKAGES_DIR, name + File.separatorChar + name + "-" + version);
     }
 }

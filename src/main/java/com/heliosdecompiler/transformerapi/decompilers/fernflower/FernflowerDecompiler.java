@@ -16,7 +16,7 @@
 
 package com.heliosdecompiler.transformerapi.decompilers.fernflower;
 
-import com.heliosdecompiler.transformerapi.ClassData;
+import com.heliosdecompiler.transformerapi.FileContents;
 import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
 import org.jetbrains.java.decompiler.main.DecompilerContext;
@@ -60,13 +60,13 @@ public class FernflowerDecompiler extends Decompiler<FernflowerSettings> {
     }
 
     @Override
-    public TransformationResult<String> decompile(Collection<ClassData> data, FernflowerSettings settings, Map<String, ClassData> classpath) {
+    public TransformationResult<String> decompile(Collection<FileContents> data, FernflowerSettings settings, Map<String, FileContents> classpath) {
         Map<String, byte[]> importantData = new HashMap<>();
 
-        for (ClassData classData : data) {
-            importantData.put(classData.getInternalName(), classData.getData());
+        for (FileContents fileContents : data) {
+            importantData.put(fileContents.getName(), fileContents.getData());
 
-            ClassReader reader = new ClassReader(classData.getData());
+            ClassReader reader = new ClassReader(fileContents.getData());
             ClassNode classNode = new ClassNode();
             reader.accept(classNode, ClassReader.SKIP_FRAMES | ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG);
 

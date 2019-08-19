@@ -16,57 +16,70 @@
 
 package com.heliosdecompiler.transformerapi.decompilers.cfr;
 
-import com.heliosdecompiler.appifier.SystemHook;
-import com.heliosdecompiler.transformerapi.ClassData;
+import com.heliosdecompiler.transformerapi.FileContents;
 import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
+import org.apache.commons.io.output.StringBuilderWriter;
+import org.benf.cfr.reader.api.CfrDriver;
+import org.benf.cfr.reader.api.SinkReturns;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
+import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CFRDecompiler extends Decompiler<CFRSettings> {
     @Override
-    public TransformationResult<String> decompile(Collection<ClassData> data, CFRSettings settings, Map<String, ClassData> classpath) {
-        Map<String, byte[]> dataToLoad = new HashMap<>();
+    public TransformationResult<String> decompile(Collection<FileContents> data, CFRSettings settings, Map<String, FileContents> classpath) {
+        Map<String, byte[]> aggregatedData = new HashMap<>();
 
-        for (ClassData classData : classpath.values()) {
-            dataToLoad.put(classData.getInternalName(), classData.getData());
+        for (FileContents fileContents : classpath.values()) {
+            aggregatedData.put(fileContents.getName(), fileContents.getData());
         }
 
-        for (ClassData classData : data) {
-            dataToLoad.put(classData.getInternalName(), classData.getData());
+        for (FileContents fileContents : data) {
+            aggregatedData.put(fileContents.getName(), fileContents.getData());
         }
 
-        PluginRunner pluginRunner = new PluginRunner(settings.getSettings(), new CFRCFS(dataToLoad));
+        InMemorySinkManager sinkManager = new InMemorySinkManager();
 
-        ByteArrayOutputStream redirOut = new ByteArrayOutputStream();
-        ByteArrayOutputStream redirErr = new ByteArrayOutputStream();
-
-        SystemHook.out.set(new PrintStream(redirOut));
-        SystemHook.err.set(new PrintStream(redirErr));
+        CfrDriver driver = new CfrDriver.Builder()
+                .withOptions(settings.getSettings())
+                .withClassFileSource(new InMemoryClassFileSource(aggregatedData))
+                .withOutputSink(sinkManager)
+                .build();
 
         Map<String, String> results = new HashMap<>();
+        for (FileContents fc : data) {
+            sinkManager.getOutputs().clear();
+            driver.analyse(Collections.singletonList(fc.getName()));
 
-        for (ClassData classData: data) {
-            try {
-                String decomp = pluginRunner.getDecompilationFor(classData.getInternalName());
-                if (!decomp.isEmpty()) {
-                    results.put(classData.getInternalName(), decomp);
-                }
-            } catch (Throwable t) {
-                SystemHook.err.get().println("An exception occurred while decompiling " + classData.getInternalName());
-                t.printStackTrace(SystemHook.err.get());
+            if (sinkManager.getOutputs().size() > 1) {
+                throw new RuntimeException("somehow got more than one output for " + fc.getName());
+            }
+
+            for (SinkReturns.DecompiledMultiVer output : sinkManager.getOutputs()) {
+                results.put(fc.getName(), output.getJava());
             }
         }
 
-        SystemHook.out.set(System.out);
-        SystemHook.err.set(System.err);
+        StringBuilder stdout = new StringBuilder();
+        StringBuilder stderr = new StringBuilder();
 
-        return new TransformationResult<>(results, new String(redirOut.toByteArray(), StandardCharsets.UTF_8), new String(redirErr.toByteArray(), StandardCharsets.UTF_8));
+        for (String progress : sinkManager.getInfo()) {
+            stdout.append(progress).append("\n");
+        }
+
+        for (SinkReturns.ExceptionMessage e : sinkManager.getExceptions()) {
+            stderr.append("An exception occurred: \n")
+                    .append("    message: ").append(e.getMessage())
+                    .append("    path: ").append(e.getPath());
+            e.getThrownException().printStackTrace(new PrintWriter(new StringBuilderWriter(stderr)));
+            stderr.append("\n");
+        }
+
+        return new TransformationResult<>(results, stdout.toString(), stderr.toString());
     }
 
     @Override

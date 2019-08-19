@@ -16,42 +16,40 @@
 
 package com.heliosdecompiler.transformerapi.assemblers;
 
-import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.TransformationException;
+import com.heliosdecompiler.transformerapi.TransformationResult;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class Assembler<SettingType, AssemblyType> {
 
     /**
-     * Decompile the given class file using the default settings
+     * Assemble the given data using the default settings
      *
-     * @param data The data of the class to decompile
+     * @param data The data of the class to assemble
      * @return The result
      */
     public final TransformationResult<byte[]> assemble(AssemblyType data) throws TransformationException {
-        return assemble(Collections.singleton(data), defaultSettings());
+        return assemble(data, defaultSettings());
     }
 
     /**
-     * Decompile the given class file. If any classes are needed to provide additional information, they should be provided in the classpath parameter
+     * Assemble the given data
      *
-     * @param data      The data of the class to decompile
-     * @param settings  The settings to use with this decompiler
+     * @param data     The data of the class to assemble
+     * @param settings The settings to use with this assembler
      * @return The result
      */
     public final TransformationResult<byte[]> assemble(AssemblyType data, SettingType settings) throws TransformationException {
-        return assemble(Collections.singleton(data), settings);
+        return assemble(Collections.singletonList(data), settings);
     }
 
     /**
-     * Decompile the given class file. If any classes are needed to provide additional information, they should be provided in the classpath parameter
+     * Assembles the given data
      *
-     * @param data      The data of the class to decompile
-     * @param settings  The settings to use with this decompiler
+     * @param data      The data of the classes to assemble
+     * @param settings  The settings to use with this assembler
      * @return The result
      */
     public abstract TransformationResult<byte[]> assemble(Collection<AssemblyType> data, SettingType settings) throws TransformationException;

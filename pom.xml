@@ -4,7 +4,7 @@
 
     <groupId>com.heliosdecompiler</groupId>
     <artifactId>transformer-api</artifactId>
-    <version>3.0.2</version>
+    <version>4.0.0</version>
     <packaging>jar</packaging>
 
     <name>transformer-api</name>
@@ -12,7 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.asm>6.0</version.asm>
+        <version.asm>7.1</version.asm>
+        <version.procyon>0.5.36</version.procyon>
     </properties>
 
     <distributionManagement>
@@ -43,7 +44,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -88,12 +89,6 @@
             <version>2.6</version>
             <!--Apache 2.0-->
         </dependency>
-        <dependency>
-            <groupId>jazzlib</groupId>
-            <artifactId>jazzlib</artifactId>
-            <version>0.0.7</version>
-            <!--GPL with exception-->
-        </dependency>
 
         <dependency>
             <groupId>org.jetbrains</groupId>
@@ -102,19 +97,24 @@
             <!--Apache 2.0-->
             <!--helios-->
         </dependency>
+
         <dependency>
             <groupId>org.benf</groupId>
             <artifactId>cfr</artifactId>
-            <version>0.124-APPIFIED</version>
+            <version>0.146</version>
             <!--MIT-->
-            <!--helios-->
+        </dependency>
+
+        <!-- Procyon dependencies (Apache 2.0) -->
+        <dependency>
+            <groupId>org.bitbucket.mstrobel</groupId>
+            <artifactId>procyon-core</artifactId>
+            <version>${version.procyon}</version>
         </dependency>
         <dependency>
-            <groupId>com.strobel</groupId>
-            <artifactId>procyon</artifactId>
-            <version>1aa0bd2</version>
-            <!--Apache 2.0-->
-            <!--helios-->
+            <groupId>org.bitbucket.mstrobel</groupId>
+            <artifactId>procyon-compilertools</artifactId>
+            <version>${version.procyon}</version>
         </dependency>
 
         <!-- ASM related dependencies (BSD) -->

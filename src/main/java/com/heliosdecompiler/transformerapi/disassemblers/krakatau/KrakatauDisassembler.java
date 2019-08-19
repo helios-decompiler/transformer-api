@@ -16,127 +16,33 @@
 
 package com.heliosdecompiler.transformerapi.disassemblers.krakatau;
 
-import com.heliosdecompiler.transformerapi.ClassData;
-import com.heliosdecompiler.transformerapi.PackagedLibraryHelper;
-import com.heliosdecompiler.transformerapi.TransformationResult;
+import com.heliosdecompiler.transformerapi.FileContents;
 import com.heliosdecompiler.transformerapi.TransformationException;
+import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.common.krakatau.KrakatauConstants;
-import com.heliosdecompiler.transformerapi.common.krakatau.KrakatauException;
+import com.heliosdecompiler.transformerapi.common.krakatau.KrakatauServer;
 import com.heliosdecompiler.transformerapi.disassemblers.Disassembler;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import static com.heliosdecompiler.transformerapi.common.krakatau.KrakatauConstants.NAME;
-import static com.heliosdecompiler.transformerapi.common.krakatau.KrakatauConstants.VERSION;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class KrakatauDisassembler extends Disassembler<KrakatauDisassemblerSettings> {
     @Override
-    public TransformationResult<String> disassemble(Collection<ClassData> data, KrakatauDisassemblerSettings settings, Map<String, ClassData> classpath) throws TransformationException {
-        Exception packageResult = PackagedLibraryHelper.checkPackagedLibrary(NAME, VERSION);
-        if (packageResult != null) {
-            throw new KrakatauException(packageResult, KrakatauException.Reason.MISSING_KRAKATAU, null, null);
+    public TransformationResult<String> disassemble(
+            Collection<FileContents> data,
+            KrakatauDisassemblerSettings settings,
+            Map<String, FileContents> classpath
+    ) throws TransformationException {
+        List<String> args = new ArrayList<>();
+        if (settings.isRoundtrip()) {
+            args.add("-roundtrip");
         }
 
-        if (settings.getPython2Exe() == null) {
-            throw new KrakatauException("No Python 2 executable provided", KrakatauException.Reason.MISSING_PYTHON2, null, null);
-        }
-
-        File sessionDirectory = null;
-
-        Process createdProcess = null;
-
-        try {
-            try {
-                sessionDirectory = Files.createTempDirectory("krakatau-disassemble-").toFile();
-            } catch (IOException ex) {
-                throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_CREATE_TEMP_DIR, null, null);
-            }
-            File inputFile = new File(sessionDirectory, "input.jar");
-            File outputFile = new File(sessionDirectory, "out.jar");
-
-            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(inputFile))) {
-                for (ClassData classData : data) {
-                    ZipEntry entry = new ZipEntry(classData.getInternalName() + ".class");
-                    out.putNextEntry(entry);
-                    out.write(classData.getData());
-                    out.closeEntry();
-                }
-            } catch (IOException ex) {
-                throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_CREATE_INPUT_FILE, null, null);
-            }
-
-            List<String> args = new ArrayList<>();
-            args.add(KrakatauConstants.canon(settings.getPython2Exe()));
-            args.add("-O");
-            args.add("disassemble.py");
-            if (settings.isRoundtrip()) {
-                args.add("-roundtrip");
-            }
-            args.add("-out");
-            args.add(KrakatauConstants.canon(outputFile));
-            args.add(KrakatauConstants.canon(inputFile));
-
-            createdProcess = KrakatauConstants.launchProcess(new ProcessBuilder(args).directory(PackagedLibraryHelper.getPackageRoot(NAME, VERSION)), settings);
-
-            String stdout;
-            String stderr;
-
-            try {
-                stdout = IOUtils.toString(createdProcess.getInputStream(), StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                StringWriter writer = new StringWriter();
-                e.printStackTrace(new PrintWriter(writer));
-                stdout = writer.toString();
-            }
-            try {
-                stderr = IOUtils.toString(createdProcess.getErrorStream(), StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                StringWriter writer = new StringWriter();
-                e.printStackTrace(new PrintWriter(writer));
-                stderr = writer.toString();
-            }
-
-            Map<String, String> results = new HashMap<>();
-
-            try (JarFile zipFile = new JarFile(outputFile)) {
-                Enumeration<JarEntry> e = zipFile.entries();
-                while (e.hasMoreElements()) {
-                    JarEntry next = e.nextElement();
-                    if (!next.isDirectory()) {
-                        String name = next.getName();
-                        if (!name.endsWith(".j")) {
-                            throw new KrakatauException("Unexpected output: " + name, KrakatauException.Reason.UNEXPECTED_OUTPUT, stdout, stderr);
-                        }
-                        name = name.substring(0, name.length() - ".j".length());
-                        try (InputStream inputStream = zipFile.getInputStream(next)) {
-                            String result = new String(IOUtils.toByteArray(inputStream), StandardCharsets.UTF_8);
-                            results.put(name, result);
-                        } catch (IOException ex) {
-                            StringWriter err = new StringWriter();
-                            ex.printStackTrace(new PrintWriter(err));
-                            stderr += "\r\nError occurred while reading input: " + next.getName() + "\r\n" + err.toString();
-                        }
-                    }
-                }
-            } catch (IOException ex) {
-                throw new KrakatauException(ex, KrakatauException.Reason.FAILED_TO_OPEN_OUTPUT, stdout, stderr);
-            }
-
-            return new TransformationResult<>(results, stdout, stderr);
-        } finally {
-            FileUtils.deleteQuietly(sessionDirectory);
-            if (createdProcess != null)
-                createdProcess.destroyForcibly();
-        }
+        KrakatauServer server = new KrakatauServer(data, classpath);
+        String[] out = KrakatauConstants.runKrakatau(settings, server, "disassemble.py", args);
+        return new TransformationResult<>(server.getOutputsAsString(), out[0], out[1]);
     }
 
     @Override

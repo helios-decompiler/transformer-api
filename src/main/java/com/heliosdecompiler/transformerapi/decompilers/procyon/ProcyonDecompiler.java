@@ -16,7 +16,7 @@
 
 package com.heliosdecompiler.transformerapi.decompilers.procyon;
 
-import com.heliosdecompiler.transformerapi.ClassData;
+import com.heliosdecompiler.transformerapi.FileContents;
 import com.heliosdecompiler.transformerapi.TransformationResult;
 import com.heliosdecompiler.transformerapi.common.procyon.ProcyonTypeLoader;
 import com.heliosdecompiler.transformerapi.decompilers.Decompiler;
@@ -33,10 +33,10 @@ import java.util.Map;
 
 public class ProcyonDecompiler extends Decompiler<DecompilerSettings> {
     @Override
-    public TransformationResult<String> decompile(Collection<ClassData> data, DecompilerSettings settings, Map<String, ClassData> classpath) {
+    public TransformationResult<String> decompile(Collection<FileContents> data, DecompilerSettings settings, Map<String, FileContents> classpath) {
         Map<String, byte[]> importantClasses = new HashMap<>();
-        for (ClassData classData : data) {
-            importantClasses.put(classData.getInternalName(), classData.getData());
+        for (FileContents fileContents : data) {
+            importantClasses.put(fileContents.getName(), fileContents.getData());
         }
 
         settings.setTypeLoader(new ProcyonTypeLoader(importantClasses));
@@ -46,13 +46,13 @@ public class ProcyonDecompiler extends Decompiler<DecompilerSettings> {
         ByteArrayOutputStream redirErr = new ByteArrayOutputStream();
         PrintStream printErr = new PrintStream(redirErr);
 
-        for (ClassData classData : data) {
+        for (FileContents fileContents : data) {
             StringWriter stringwriter = new StringWriter();
             try {
-                com.strobel.decompiler.Decompiler.decompile(classData.getInternalName(), new PlainTextOutput(stringwriter), settings);
-                result.put(classData.getInternalName(), stringwriter.toString());
+                com.strobel.decompiler.Decompiler.decompile(fileContents.getName(), new PlainTextOutput(stringwriter), settings);
+                result.put(fileContents.getName(), stringwriter.toString());
             } catch (Throwable t) {
-                printErr.println("An exception occurred while decompiling: " + classData.getInternalName());
+                printErr.println("An exception occurred while decompiling: " + fileContents.getName());
                 t.printStackTrace(printErr);
             }
         }

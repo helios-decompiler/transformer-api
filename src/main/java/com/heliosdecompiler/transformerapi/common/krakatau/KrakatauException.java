@@ -95,6 +95,8 @@ public class KrakatauException extends TransformationException {
         FAILED_TO_OPEN_OUTPUT,
         MISSING_PYTHON2,
         MISSING_KRAKATAU,
+        FAILED_TO_LAUNCH_SERVER,
+        SERVER_IO_ERROR,
         UNKNOWN
     }
 }
